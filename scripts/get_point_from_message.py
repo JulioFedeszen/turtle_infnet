@@ -24,6 +24,7 @@ import rospy, time, sys, cv2
 import numpy as np
 import image_lib_v2 as img
 import inicio_ajuste_braco
+import create_mask
 from geometry_msgs.msg import Pose2D
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
@@ -82,7 +83,7 @@ def camera_main():
             try:
                 
                 # Creating masks         
-                mask.append(img.get_mask(input_img,mask_l[i],mask_h[i],im_blur=True))
+                mask.append(create_mask.execute(input_img,mask_l[i],mask_h[i],im_blur=True))
 
                 # Getting centroids    
                 cent_, img_cont = img.get_centroid(input_img,mask[i])
