@@ -26,6 +26,7 @@ import image_lib_v2 as img
 import inicio_ajuste_braco
 import create_mask
 import create_centroid
+import draw_container_box
 from geometry_msgs.msg import Pose2D
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
@@ -90,7 +91,7 @@ def camera_main():
                 cent_, img_cont = create_centroid.execute(input_img,mask[i])
 
                 # Getting base points
-                b_, img_cont = img.get_contorno_sol(img_cont,mask[i])
+                b_, img_cont = draw_container_box.execute(img_cont,mask[i])
                 
                 cv2.namedWindow('Centroides')
                 cv2.imshow('Centroides',img_cont)
