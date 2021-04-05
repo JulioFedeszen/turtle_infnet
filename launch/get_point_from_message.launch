@@ -2,10 +2,10 @@
 	
 	<arg name="show_image" default="1" />
 	
-    <rosparam file="$(find infnet)/cfg/mask_sun.yaml" />
+    <rosparam file="$(find turtle_infnet)/cfg/mask_sun.yaml" />
 	
     <node name="get_point_message" 
-        pkg="infnet" 
+        pkg="turtle_infnet"  
         type="get_point_from_message.py"
         output="screen"
         args="$(arg show_image)">

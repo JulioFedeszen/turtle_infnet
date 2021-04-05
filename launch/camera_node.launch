@@ -10,7 +10,7 @@
         args="$(arg video)"
         output="screen">
 
-	<remap from="image_raw" to="//camera/rgb/image_raw"/>
+	<remap from="image_raw" to="/camera/rgb/image_raw"/>
 	</node>
 	
 </launch>
