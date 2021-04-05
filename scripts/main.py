@@ -24,7 +24,6 @@ import rospy, time, sys, cv2
 import numpy as np
 import image_lib_v2 as img
 import inicio_ajuste_braco
-import create_mask
 import create_centroid
 import draw_container_box
 from geometry_msgs.msg import Pose2D
@@ -41,7 +40,7 @@ def callback_img(msg):
     # receive the ros image mesage and convert to bgr, ohta and hsv  
     input_img = bridge.imgmsg_to_cv2(msg,desired_encoding="bgr8")   
 
-def camera_main():
+def main():
 
     """
     This function is called from the main conde and calls 
@@ -85,7 +84,7 @@ def camera_main():
             try:
                 
                 # Creating masks         
-                mask.append(create_mask.execute(input_img,mask_l[i],mask_h[i],im_blur=True))
+                mask.append(img.get_mask(input_img,mask_l[i],mask_h[i],im_blur=True))
 
                 # Getting centroids    
                 cent_, img_cont = create_centroid.execute(input_img,mask[i])
@@ -149,6 +148,5 @@ for i in range(0,num_masks):
 
 
 if __name__ == '__main__':
-    camera_main()
-
+    main()
 

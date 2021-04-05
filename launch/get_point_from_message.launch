@@ -6,13 +6,12 @@
 	
     <node name="get_point_message" 
         pkg="turtle_infnet"  
-        type="get_point_from_message.py"
+        type="main.py"
         output="screen"
         args="$(arg show_image)">
 
 	<remap from="image_raw" to="/camera/rgb/image_raw"/>
 	<remap from="goal_centroid" to="/camera/img_centroid"/>
-	<remap from="goal_base" to="/camera/img_base"/>
 
 	</node>
 	
