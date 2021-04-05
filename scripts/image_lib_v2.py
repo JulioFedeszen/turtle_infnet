@@ -19,7 +19,6 @@
 #############################################
 import rospy, time, sys, cv2
 import numpy as np
-import image_lib as img
 from geometry_msgs.msg import Pose2D
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
@@ -69,20 +68,9 @@ def get_mask(image, low, high, im_blur=False):
     
     # applying Gaussian smoothing    
     if im_blur:
-        mask = cv2.GaussianBlur(mask,(5,5),10)
+        mask = cv2.GaussianBlur(mask,(15,15),20)
 
-
-    # applying morphological operations
-    kernel = np.ones((3),np.uint8)
-
-    mask_out = cv2.dilate(mask,kernel,iterations=2)
-    mask_out = cv2.erode(mask_out,kernel,iterations=2)
-    
-    mask_out = cv2.morphologyEx(mask_out,cv2.MORPH_CLOSE, kernel)
-    mask_out = cv2.morphologyEx(mask_out,cv2.MORPH_CLOSE, kernel)
-    mask_out = cv2.morphologyEx(mask_out,cv2.MORPH_OPEN, kernel)
-
-    return mask_out
+    return mask
 
 def get_centroid(cv_img, mask, put_text=False, draw_contour=False):
     """
@@ -96,8 +84,6 @@ def get_centroid(cv_img, mask, put_text=False, draw_contour=False):
     # fiding mask contours
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL,
                                 cv2.CHAIN_APPROX_SIMPLE)
- 
-    #contours = contours[1]
  
     # contours parameters
     area = 0
@@ -142,7 +128,7 @@ def get_centroid(cv_img, mask, put_text=False, draw_contour=False):
     return centroid, cv_output
 
 
-def get_base(cv_img, mask, put_text=False):
+def get_contorno_sol(cv_img, mask, put_text=False):
     
     """
     Finds image base and bouding box
@@ -203,24 +189,5 @@ def get_base(cv_img, mask, put_text=False):
                 (high_corner_x,high_corner_y),
                 (low_corner_x,low_corner_y),
                 (0,255,0),2)
-
-    # drowning image output elements
-    cv2.circle(cv_output, (base_x, base_y), 4, (255,0,0),-1)
-
-    if put_text:
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        bottomLeftCornerOfText = (base_x,base_y+10)
-        fontScale = 0.5
-        fontColor = (255,255,255)
-        lineType = 1
-        text = '('+str(base_x)+', '+str(base_y)+')'
-
-        cv2.putText(cv_output,text, 
-            bottomLeftCornerOfText, 
-            font, 
-            fontScale,
-            fontColor,
-            lineType)
-
 
     return base, cv_output

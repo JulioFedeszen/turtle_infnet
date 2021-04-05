@@ -23,6 +23,7 @@
 import rospy, time, sys, cv2
 import numpy as np
 import image_lib_v2 as img
+import inicio_ajuste_braco
 from geometry_msgs.msg import Pose2D
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
@@ -52,13 +53,11 @@ def camera_main():
     global input_img
     global show_img
 
-
     # Initializing ros node
     rospy.init_node('camera_node', anonymous=True)    # node name
     
     # Publishers
     pub_goal_centroid = rospy.Publisher('goal_centroid', Pose2D, queue_size=10)  # send control signals
-    pub_goal_base = rospy.Publisher('goal_base', Pose2D, queue_size=10)  # send control signals
     
     # Subscribers
     rospy.Subscriber('image_raw', Image, callback_img)
@@ -78,7 +77,6 @@ def camera_main():
         # Creating variables
         mask = []
         centroid = []
-        base = []
 
         for i in range(num_masks):        
             try:
@@ -90,7 +88,7 @@ def camera_main():
                 cent_, img_cont = img.get_centroid(input_img,mask[i])
 
                 # Getting base points
-                b_, img_cont = img.get_base(img_cont,mask[i])
+                b_, img_cont = img.get_contorno_sol(img_cont,mask[i])
                 
                 cv2.namedWindow('Centroides')
                 cv2.imshow('Centroides',img_cont)
@@ -98,12 +96,11 @@ def camera_main():
 
                 # add points
                 centroid.append(cent_)
-                base.append(b_)
                 print('mask OK!')
             except:
                 
                 centroid = None
-                base = None
+               # base = None
                 img_cont = input_img
                 print('mask nok')
 
@@ -113,19 +110,13 @@ def camera_main():
         if centroid is not None:
             goal_centroid.x = centroid[0][0]
             goal_centroid.y = centroid[0][1]
-            goal_centroid.theta = 1            
+            goal_centroid.theta = 1         
 
+        inicio_ajuste_braco.execute(goal_centroid)
        
-        goal_base = Pose2D()       
-        if base is not None:
-            goal_base.x = base[0][0]
-            goal_base.y = base[0][1]
-            goal_base.theta = 1
             
         # Publishin... 
         pub_goal_centroid.publish(goal_centroid)
-        pub_goal_base.publish(goal_base)
-
 
         
         # showing images
