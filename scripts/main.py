@@ -67,7 +67,7 @@ def main():
     # control rate
     rate = rospy.Rate(30)   # run the node at 15H
     pub_img = Image()
-    input_img = []
+    #input_img = []
 
     # variables of flow control 
     time.sleep(1)
